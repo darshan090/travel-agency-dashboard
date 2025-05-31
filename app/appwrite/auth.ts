@@ -63,13 +63,22 @@ export const getExistingUser = async (id: string) => {
   
   export const loginWithGoogle = async () => {
     try {
-      account.createOAuth2Session(
+      // Use the full URL including protocol and port
+      const baseUrl = window.location.origin;
+      const successUrl = `${baseUrl}/`;
+      const failureUrl = `${baseUrl}/sign-in`;
+      
+      console.log('Redirect URLs:', { successUrl, failureUrl }); // Debug log
+      
+      await account.createOAuth2Session(
         OAuthProvider.Google,
-        `${window.location.origin}/`,
-        `${window.location.origin}/404`
+        successUrl,
+        failureUrl,
+        ['profile', 'email']
       );
     } catch (error) {
       console.error("Error during OAuth2 session creation:", error);
+      throw error;
     }
   };
   

@@ -1,4 +1,3 @@
-
 import { Outlet } from 'react-router'
 import {SidebarComponent} from '@syncfusion/ej2-react-navigations'
 import { MobileSidebar, Navitems } from 'components'
@@ -23,7 +22,7 @@ export async function clientLoader (){
   }
 }
 
-const adminlayout = () => {
+const AdminLayout = () => {
   return (
     <div className='admin-layout'>
         <MobileSidebar />
@@ -39,4 +38,4 @@ const adminlayout = () => {
   )
 }
 
-export default adminlayout
+export default AdminLayout

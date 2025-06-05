@@ -1,22 +1,48 @@
-import { Header } from "components"
+import Header from "../../../components/Header"
 import { ColumnDirective, ColumnsDirective, GridComponent } from "@syncfusion/ej2-react-grids"
 import { cn, formatDate } from "~/lib/utils"
 import { getAllUser } from "~/appwrite/auth"
 import type { Route } from "./+types/all-users"
 
-export const loader = async () => {
-  const {users,total } = await getAllUser(10,0);
-
-  return {users,total}
+type UserData = {
+  name: string;
+  email: string;
+  imageUrl: string;
+  joinedAt: string;
+  status: string;
 }
 
-const allUsers = ({loaderData}:Route.ComponentProps) => {
-  const {users} = loaderData
+export const loader = async () => {
+  try {
+    const {users, total} = await getAllUser(10, 0);
+    console.log('Loader data:', { users, total });
+    return { users, total };
+  } catch (error) {
+    console.error('Loader error:', error);
+    return { users: [], total: 0 };
+  }
+}
+
+const AllUsers = ({loaderData}:Route.ComponentProps) => {
+  const {users} = loaderData;
+  console.log('Component data:', { users });
+
+  if (!users || users.length === 0) {
+    return (
+      <main className="all-users wrapper">
+        <Header 
+          title="Manage Users"
+          description="No users found"
+        />
+      </main>
+    );
+  }
+
   return (
     <main className="all-users wrapper">
       <Header 
         title="Manage Users"
-        description = 'Filter, sort and access detailed user profiles'
+        description="Filter, sort and access detailed user profiles"
       />
       <GridComponent dataSource={users} gridLines="None">
           <ColumnsDirective>
@@ -60,10 +86,9 @@ const allUsers = ({loaderData}:Route.ComponentProps) => {
             )}
             />
           </ColumnsDirective>
-          
       </GridComponent>
     </main>
   )
 }
 
-export default allUsers
+export default AllUsers

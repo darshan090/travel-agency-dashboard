@@ -36,12 +36,15 @@ export const getExistingUser = async (id: string) => {
           name: user.name,
           imageUrl: profilePicture,
           joinedAt: new Date().toISOString(),
+          status: 'admin'
         }
       );
   
       if (!createdUser.$id) redirect("/sign-in");
+      return createdUser;
     } catch (error) {
       console.error("Error storing user data:", error);
+      throw error;
     }
   };
   
@@ -111,17 +114,21 @@ export const getExistingUser = async (id: string) => {
     }
   };
 
-export const getAllUser = async (limit:number,offset:number) => {
+export const getAllUser = async (limit: number, offset: number) => {
   try {
-    const { documents:users,total } = await database.listDocuments(
+    const { documents: users, total } = await database.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userscollectionId,
-      [Query.limit(limit),Query.offset(offset)]
-    ) 
-    if(total === 0) return {users:[],total}
-    return {users,total};
+      [
+        Query.limit(limit),
+        Query.offset(offset),
+        Query.orderDesc('joinedAt')
+      ]
+    );
+    console.log('Fetched users:', users); // Debug log
+    return { users, total };
   } catch (error) {
-    console.log("Error fetching usres",error)
-    return {users:[],total:0}
+    console.error("Error fetching users:", error);
+    return { users: [], total: 0 };
   }
 }
